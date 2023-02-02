@@ -11,11 +11,74 @@ namespace ContosoUniversity.Data
             if (context.Students.Any())
                 return; //banco ja foi criado
 
-            AddStudents(context);
+            //criar estudantes para popular o banco
+            var students = new Student[]
+            {
+                new Student{FirstMidName="Carson",LastName="Alexander",EnrollmentDate=DateTime.Parse("2005-09-01")},
+                new Student{FirstMidName="Meredith",LastName="Alonso",EnrollmentDate=DateTime.Parse("2002-09-01")},
+                new Student{FirstMidName="Arturo",LastName="Anand",EnrollmentDate=DateTime.Parse("2003-09-01")},
+                new Student{FirstMidName="Gytis",LastName="Barzdukas",EnrollmentDate=DateTime.Parse("2002-09-01")},
+                new Student{FirstMidName="Yan",LastName="Li",EnrollmentDate=DateTime.Parse("2002-09-01")},
+                new Student{FirstMidName="Peggy",LastName="Justice",EnrollmentDate=DateTime.Parse("2001-09-01")},
+                new Student{FirstMidName="Laura",LastName="Norman",EnrollmentDate=DateTime.Parse("2003-09-01")},
+                new Student{FirstMidName="Nino",LastName="Olivetto",EnrollmentDate=DateTime.Parse("2005-09-01")}
+            };
 
-            AddCourses(context);
+            //adicionar estudantes ao contexto
+            foreach (Student s in students)
+            {
+                context.Students.Add(s);
+            }
 
-            AddEnrollment(context);
+            //salvar no banco de dados
+            context.SaveChanges();
+
+            //criar cursos para popular o banco
+            var courses = new Course[]
+            {
+                new Course{Title="Chemistry",Credits=3},
+                new Course{Title="Microeconomics",Credits=3},
+                new Course{Title="Macroeconomics",Credits=3},
+                new Course{Title="Calculus",Credits=4},
+                new Course{Title="Trigonometry",Credits=4},
+                new Course{Title="Composition",Credits=3},
+                new Course{Title="Literature",Credits=4}
+            };
+
+            //adicionar cursos ao contexto
+            foreach (Course course in courses)
+            {
+                context.Courses.Add(course);
+            }
+
+            //salvar no banco de dados
+            context.SaveChanges();
+
+            //criar estudantes para popular o banco
+            var enrollments = new Enrollment[]
+            {
+                new Enrollment{StudentID=students[0].ID,CourseID=courses[0].CourseID,Grid=Grid.A},
+                new Enrollment{StudentID=students[0].ID,CourseID=courses[1].CourseID,Grid=Grid.C},
+                new Enrollment{StudentID=students[0].ID,CourseID=courses[2].CourseID,Grid=Grid.B},
+                new Enrollment{StudentID=students[1].ID,CourseID=courses[3].CourseID,Grid=Grid.B},
+                new Enrollment{StudentID=students[1].ID,CourseID=courses[4].CourseID,Grid=Grid.F},
+                new Enrollment{StudentID=students[1].ID,CourseID=courses[5].CourseID,Grid=Grid.F},
+                new Enrollment{StudentID=students[2].ID,CourseID=courses[0].CourseID},
+                new Enrollment{StudentID=students[3].ID,CourseID=courses[0].CourseID},
+                new Enrollment{StudentID=students[3].ID,CourseID=courses[1].CourseID,Grid=Grid.F},
+                new Enrollment{StudentID=students[4].ID,CourseID=courses[2].CourseID,Grid=Grid.C},
+                new Enrollment{StudentID=students[5].ID,CourseID=courses[3].CourseID},
+                new Enrollment{StudentID=students[6].ID,CourseID=courses[4].CourseID,Grid=Grid.A},
+            };
+
+            //adicionar estudantes ao contexto
+            foreach (Enrollment enrollment in enrollments)
+            {
+                context.Enrollments.Add(enrollment);
+            }
+
+            //salvar no banco de dados
+            context.SaveChanges();
         }
 
         public static void AddStudents(SchoolContext c)
@@ -31,7 +94,6 @@ namespace ContosoUniversity.Data
                 new Student{FirstMidName="Peggy",LastName="Justice",EnrollmentDate=DateTime.Parse("2001-09-01")},
                 new Student{FirstMidName="Laura",LastName="Norman",EnrollmentDate=DateTime.Parse("2003-09-01")},
                 new Student{FirstMidName="Nino",LastName="Olivetto",EnrollmentDate=DateTime.Parse("2005-09-01")}
-
             };
 
             //adicionar estudantes ao contexto
@@ -41,7 +103,7 @@ namespace ContosoUniversity.Data
             }
 
             //salvar no banco de dados
-            c.SaveChanges();
+            c.SaveChanges();           
         }
 
         public static void AddCourses(SchoolContext c)
