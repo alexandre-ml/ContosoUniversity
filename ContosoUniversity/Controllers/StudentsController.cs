@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ContosoUniversity.Data;
 using ContosoUniversity.Models;
+using Microsoft.AspNetCore.Mvc.Formatters;
 
 namespace ContosoUniversity.Controllers
 {
@@ -20,11 +21,48 @@ namespace ContosoUniversity.Controllers
         }
 
         // GET: Students
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortOrder, string currentFilter, string searchString, int? pageNumber)
         {
-              return _context.Students != null ? 
-                          View(await _context.Students.ToListAsync()) :
-                          Problem("Entity set 'SchoolContext.Students'  is null.");
+            ViewData["CurrentSort"] = sortOrder;
+            ViewData["NameSortParam"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewData["DateSortParam"] = sortOrder == "Date" ? "date_desc" : "Date";
+
+            if (searchString != null)
+                pageNumber = 1;
+            else
+                searchString = currentFilter;
+
+            ViewData["CurrentFilter"] = searchString;
+
+            var students = from s in _context.Students
+                           select s;
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                students = students.Where(s => s.LastName.Contains(searchString) ||
+                                            s.FirstMidName.Contains(searchString));
+            }
+
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    students = students.OrderByDescending(s => s.LastName);
+                    break;
+                case "Date":
+                    students = students.OrderBy(s => s.EnrollmentDate);
+                    break;
+                case "date_desc":
+                    students = students.OrderByDescending(s => s.EnrollmentDate);
+                    break;
+                default:
+                    students = students.OrderBy(s => s.LastName);
+                    break;
+            }
+
+            int pageSize = 3;
+
+            //return View(await students.AsNoTracking().ToListAsync());
+            return View(await PaginatedList<Student>.CreateAsync(students.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
         // GET: Students/Details/5
@@ -68,9 +106,9 @@ namespace ContosoUniversity.Controllers
                     _context.Add(student);
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
-                }                
+                }
             }
-            catch(DbUpdateException ex)
+            catch (DbUpdateException ex)
             {
                 ModelState.AddModelError("", "Incapaz de salvar as mudanças"
                     + "Tente novamente, e se o problema continuar"
@@ -110,10 +148,10 @@ namespace ContosoUniversity.Controllers
 
             var studentToUpdate = await _context.Students.FirstOrDefaultAsync(s => s.ID == id);
 
-            if(await TryUpdateModelAsync<Student>(
-                studentToUpdate, 
+            if (await TryUpdateModelAsync<Student>(
+                studentToUpdate,
                 "",
-                s => s.FirstMidName, s => s.LastName, s=> s.EnrollmentDate))
+                s => s.FirstMidName, s => s.LastName, s => s.EnrollmentDate))
             {
                 try
                 {
@@ -171,11 +209,11 @@ namespace ContosoUniversity.Controllers
                 try
                 {
                     _context.Students.Remove(student);
-                    await _context.SaveChangesAsync();                    
+                    await _context.SaveChangesAsync();
                 }
                 catch
                 {
-                    return RedirectToAction(nameof(Delete), new {id = id, saveChangesError = true});
+                    return RedirectToAction(nameof(Delete), new { id = id, saveChangesError = true });
                 }
             }
 
@@ -185,7 +223,7 @@ namespace ContosoUniversity.Controllers
 
         private bool StudentExists(int id)
         {
-          return (_context.Students?.Any(e => e.ID == id)).GetValueOrDefault();
+            return (_context.Students?.Any(e => e.ID == id)).GetValueOrDefault();
         }
     }
 }
