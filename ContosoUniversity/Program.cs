@@ -27,7 +27,7 @@ using (var scope = app.Services.CreateScope())
             services.GetRequiredService<DbContextOptions<SchoolContext>>());
 
         //iniciar o banco de dados
-        DbInitialize.Initializer(context);
+        DbInitialize.InitializerV1(context);
     }
     catch(Exception ex)
     {
