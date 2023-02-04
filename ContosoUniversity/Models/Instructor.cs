@@ -19,7 +19,7 @@ namespace ContosoUniversity.Models
         public string FirstMidName { get; set; }
 
         [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString ="{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
+        [DisplayFormat(DataFormatString ="{0:dd/MM/yyyy}")]//, ApplyFormatInEditMode = true)]
         [Display(Name ="Hire Date")]
         public DateTime HireDate { get; set; }
 
@@ -33,6 +33,6 @@ namespace ContosoUniversity.Models
         }
 
         public OfficeAssignment OfficeAssignment { get; set; }
-        public ICollection<CourseAssignment> CourseAssignments { get; set; }
+        public ICollection<CourseAssignment>? CourseAssignments { get; set; }
     }
 }

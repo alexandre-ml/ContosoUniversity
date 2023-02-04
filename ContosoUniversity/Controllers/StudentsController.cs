@@ -108,7 +108,7 @@ namespace ContosoUniversity.Controllers
                     return RedirectToAction(nameof(Index));
                 }
             }
-            catch (DbUpdateException ex)
+            catch (DbUpdateException /*ex*/)
             {
                 ModelState.AddModelError("", "Incapaz de salvar as mudanças"
                     + "Tente novamente, e se o problema continuar"
@@ -137,7 +137,7 @@ namespace ContosoUniversity.Controllers
         // POST: Students/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+        [HttpPost, ActionName("Edit")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditPost(int? id)
         {
@@ -158,7 +158,7 @@ namespace ContosoUniversity.Controllers
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateException ex)
+                catch (DbUpdateException /*ex*/)
                 {
                     ModelState.AddModelError("", "Incapaz de salvar as mudanças"
                         + "Tente novamente, e se o problema continuar"
